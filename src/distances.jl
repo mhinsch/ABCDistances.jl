@@ -7,7 +7,7 @@
 ##  *  "evaldist" evaluates the distance for particular vector of simulated summaries.
 ##An ABCDistance object must be created for a particular vector of observed summaries.
 ##Ths is computationally convenient for some distance functions.
-abstract ABCDistance
+abstract type ABCDistance end
 
 #################################
 ##Subtypes and methods of ABCDistance
@@ -55,7 +55,7 @@ type Euclidean <: ABCDistance
 end
 
 function evaldist(x::Euclidean, s::Array{Float64,1})
-    absdiff = abs(x.sobs - s)
+    absdiff = abs.(x.sobs - s)
     norm(absdiff, 2.0)
 end
 
@@ -92,11 +92,11 @@ type WeightedEuclidean <: ABCDistance
 end
 
 function WeightedEuclidean(sobs::Array{Float64, 1}, scale_type::AbstractString)
-    WeightedEuclidean(sobs, Array(Float64,0), scale_type)
+    WeightedEuclidean(sobs, Array{Float64}(0), scale_type)
 end
 
 function WeightedEuclidean(sobs::Array{Float64, 1})
-    WeightedEuclidean(sobs, Array(Float64,0), "MAD")
+    WeightedEuclidean(sobs, Array{Float64}(0), "MAD")
 end
 
 function init(x::WeightedEuclidean, sumstats::Array{Float64, 2}, parameters::Array{Float64, 2})
@@ -124,16 +124,16 @@ end
 
 ##Median absolute deviation
 function MAD(x::Array{Float64, 1})
-    median(abs(x - median(x)))
+    median(abs.(x - median(x)))
 end
 
 ##Absolute deviation to observations
 function ADO(x::Array{Float64, 1}, obs::Float64)
-    median(abs(x - obs))
+    median(abs.(x - obs))
 end
 
 function evaldist(x::WeightedEuclidean, s::Array{Float64, 1})
-    absdiff = abs(x.sobs - s)
+    absdiff = abs.(x.sobs - s)
     norm(absdiff .* x.w, 2.0)
 end
 
