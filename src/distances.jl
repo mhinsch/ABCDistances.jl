@@ -101,7 +101,10 @@ end
 
 function init(x::WeightedEuclidean, sumstats::Array{Float64, 2}, parameters::Array{Float64, 2})
     (nstats, nsims) = size(sumstats)
-    if (nsims == 0)
+
+#	println("init: $(x.scale_type), $nstats, $nsims")
+    
+	if (nsims == 0)
         sig = ones(nstats)
     elseif x.scale_type=="MAD"
         sig = Float64[MAD(sumstats[i,:]) for i in 1:nstats]
@@ -119,6 +122,10 @@ function init(x::WeightedEuclidean, sumstats::Array{Float64, 2}, parameters::Arr
     elseif x.scale_type=="ADO"
         sig = [ADO(sumstats[i,:], x.sobs[i]) for i in 1:nstats]
     end
+
+#	println(sig)
+#	println(sumstats[3,:])
+
     return WeightedEuclidean(x.sobs, 1.0./sig, x.scale_type)
 end
 
